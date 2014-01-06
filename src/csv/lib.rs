@@ -1,11 +1,9 @@
-#[link(name = "csv", vers = "0.1", author = "geal")];
 #[crate_type = "lib"];
 #[desc = "CSV parser"];
 #[license = "MIT"];
 
 use std::io;
 use std::str;
-use std::vec;
 use std::iter::Iterator;
 
 type Row = ~[~str];
@@ -66,11 +64,9 @@ impl<R: Reader> Parser<R> {
       None    => return Wait,
       Some(c) => return self.parse_char(c)
     }
-    Continue
   }
 
   fn parse_char(&mut self, c: char) -> State {
-    let delim = self.delim;
     if c == self.delim {
         self.row.push(str::from_chars(self.acc));
         self.acc.clear();
