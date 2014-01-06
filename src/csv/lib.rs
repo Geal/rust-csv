@@ -10,6 +10,13 @@ use std::iter::Iterator;
 
 type Row = ~[~str];
 
+enum State {
+  Continue,
+  Wait,
+  EOL,
+  EOF
+}
+
 pub struct Parser<R> {
   priv count: uint,
   priv readlen: uint,
@@ -17,7 +24,8 @@ pub struct Parser<R> {
   priv buffer: ~[char],
   priv acc: ~[char],
   priv row: Row,
-  priv reader: ~R
+  priv reader: ~R,
+  priv state: State
 }
 
 
@@ -30,15 +38,9 @@ pub fn init<R: io::Reader>(reader: ~R) -> ~Parser<R> {
     buffer: ~[],
     acc: ~[],
     row: ~[],
-    reader: reader
+    reader: reader,
+    state: Continue
   }
-}
-
-enum State {
-  Continue,
-  Wait,
-  EOL,
-  EOF
 }
 
 impl<R: Reader> Parser<R> {
@@ -48,15 +50,15 @@ impl<R: Reader> Parser<R> {
         return EOF
       }
 
-      let bytes = self.reader.read_bytes(self.readlen);
+      let mut bytes = [0, .. 1024];
+      let optnbread = self.reader.read(bytes);
       if bytes.len() == 0 && ! self.reader.eof() {
         return Wait
       }
 
-      for el in str::from_utf8(bytes).chars() {
+      for el in str::from_utf8(bytes).slice(0, optnbread.unwrap()).chars() {
         self.buffer.push(el);
       }
-      return Continue
     }
 
     let optc = self.buffer.shift_opt();
@@ -94,23 +96,42 @@ impl<R: Reader> Parser<R> {
     self.row.clear();
     row
   }
+
+  fn extract_last_row(&mut self) -> Row {
+    self.row.push(str::from_chars(self.acc));
+    self.acc.clear();
+    self.extract_row()
+  }
+
+  fn state(&self) -> State {
+    self.state
+  }
 }
 
 impl<R: Reader> Iterator<Row> for Parser<R> {
   fn next(&mut self) -> Option<Row> {
-    /*while(1) {
-      match self.parse_next_char() {
-        EOL => got a row
-        EOF => maybe got a row (test)
-        Continue => Continue
-        Wait => wait for data
+    match self.state {
+      EOF => return None,
+      _   => {
+        while(true) {
+          match self.parse_next_char() {
+            EOL => {
+              let row = self.extract_row();
+              self.state = Continue;
+              return Some(row);
+            }
+            EOF => {
+              // the row may not be complete
+              let row = self.extract_last_row();
+              self.state = EOF;
+              return Some(row);
+            }
+            Continue => (),
+            Wait => return None
+          }
+        }
       }
-    }*/
-    if self.count ==  0 {
-      return None
     }
-
-    self.count -= 1;
-    return Some(~[~"a", ~"b", ~"c", ~"d"]);
+    None
   }
 }
