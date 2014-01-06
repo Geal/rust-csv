@@ -1,5 +1,7 @@
 # Parsing CSV in Rust
 
+[![Build Status](https://travis-ci.org/Geal/rust-csv.png?branch=master)](https://travis-ci.org/Geal/rust-csv)
+
 This parser is a rewrite, different from the original [rust-csv](https://github.com/brson/rust-csv), because the previous project used an old syntax. For a failed attempt to update it to current Rust, see [rust-csv-legacy](https://github.com/Geal/rust-csv-legacy)
 ```Rust
     use csv;
