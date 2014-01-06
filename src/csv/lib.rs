@@ -121,14 +121,26 @@ impl<R: Reader> Iterator<Row> for Parser<R> {
           match self.parse_next_char() {
             EOL => {
               let row = self.extract_row();
-              self.state = Continue;
-              return Some(row);
+              if row.len() > 0 {
+                self.state = Continue;
+                return Some(row);
+              } else {
+                self.state = EOF;
+                return None;
+              }
             }
             EOF => {
               // the row may not be complete
+              println!("EOF");
               let row = self.extract_last_row();
               self.state = EOF;
-              return Some(row);
+              if row.len() == 0 || (row.len() == 1 && row[0].len() == 0) {
+                println!("none row");
+                return None;
+              } else {
+                println!("row > 0");
+                return Some(row);
+              }
             }
             Continue => (),
             Wait => return None

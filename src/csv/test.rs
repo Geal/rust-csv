@@ -17,7 +17,6 @@ fn init() {
   assert!(p.next().is_none());
 }
 
-
 #[test]
 fn multiline() {
   let s = ~"a,b,c,d\r\ne,f,g,h";
@@ -42,4 +41,5 @@ fn delim() {
   assert_eq!(optrow.unwrap(), ~[~"aA ", ~"b", ~"c", ~"d", ~" e"]);
   let secoptrow = p.next();
   assert_eq!(secoptrow.unwrap(), ~[~"f", ~"g", ~"h", ~" I", ~"j"]);
+  assert!(p.next().is_none());
 }
