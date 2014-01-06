@@ -1,5 +1,7 @@
 # Parsing CSV in Rust
 
+This parser is a rewrite, different from the original [rust-csv](https://github.com/brson/rust-csv), because the previous project used an old syntax. For a failed attempt to update it to current Rust, see [rust-csv-legacy](https://github.com/Geal/rust-csv-legacy)
+```Rust
     use csv;
     use std::io::mem::Memreader;
 
@@ -12,14 +14,18 @@
     for row in parser {
       println!("first element is: {}", row[0]);
     }
+```
 
 ## Installation
 
-    rustpkg install github.com/Geal/rust-csv
+```Shell
+    $ rustpkg install github.com/Geal/rust-csv
+```
 
 ## Unit testing
 
 Clone the project, and in its repository:
 
+```Shell
     $ rustpkg build csv && rustpkg test csv
-
+```
