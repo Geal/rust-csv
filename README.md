@@ -13,3 +13,13 @@
       println!("first element is: {}", row[0]);
     }
 
+## Installation
+
+    rustpkg install github.com/Geal/rust-csv
+
+## Unit testing
+
+Clone the project, and in its repository:
+
+    $ rustpkg build csv && rustpkg test csv
+
