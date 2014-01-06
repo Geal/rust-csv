@@ -103,6 +103,10 @@ impl<R: Reader> Parser<R> {
     self.extract_row()
   }
 
+  pub fn delim(&mut self, delim:char) {
+    self.delim = delim;
+  }
+
   fn state(&self) -> State {
     self.state
   }

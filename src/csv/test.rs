@@ -31,3 +31,15 @@ fn multiline() {
   assert!(p.next().is_none());
 }
 
+#[test]
+fn delim() {
+  let s = ~"aA ;b;c;d; e\r\nf;g;h; I;j\r\n";
+  let reader = ~MemReader::new(s.into_bytes());
+  let mut p = csv::init(reader);
+  p.delim(';');
+
+  let optrow = p.next();
+  assert_eq!(optrow.unwrap(), ~[~"aA ", ~"b", ~"c", ~"d", ~" e"]);
+  let secoptrow = p.next();
+  assert_eq!(secoptrow.unwrap(), ~[~"f", ~"g", ~"h", ~" I", ~"j"]);
+}
