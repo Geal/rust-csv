@@ -5,5 +5,4 @@ install:
   - sudo apt-get install rust-nightly
 script:
   - rustc -v
-  - rustpkg build csv
-  - rustpkg test csv
+  - make test
