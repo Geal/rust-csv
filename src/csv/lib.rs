@@ -11,26 +11,25 @@ type Row = ~[~str];
 enum State {
   Continue,
   Wait,
-  EOL,
-  EOF
+  EOL
 }
 
-pub struct Parser<R> {
+pub struct Parser<'a, R> {
   priv count: uint,
   priv readlen: uint,
   priv delim: char,
   priv buffer: ~[char],
   priv acc: ~[char],
   priv row: Row,
-  priv reader: ~R,
+  priv reader: &'a mut R,
   priv state: State
 }
 
 
-pub fn init<R: io::Reader>(reader: ~R) -> ~Parser<R> {
+pub fn init<'a, R: io::Reader>(reader: &'a mut R) -> ~Parser<'a, R> {
 
   ~Parser {
-    count: 5,
+    count: 0,
     readlen: 1024,
     delim: ',',
     buffer: ~[],
@@ -41,27 +40,34 @@ pub fn init<R: io::Reader>(reader: ~R) -> ~Parser<R> {
   }
 }
 
-impl<R: Reader> Parser<R> {
+impl<'a, R: Reader> Parser<'a, R> {
   fn parse_next_char(&mut self) -> State {
     if self.buffer.len() == 0 {
-      if self.reader.eof() {
-        return EOF
-      }
 
       let mut bytes = [0, .. 1024];
       let optnbread = self.reader.read(bytes);
-      if bytes.len() == 0 && ! self.reader.eof() {
+      if bytes.len() == 0 {
+        println!("0 bytes read");
         return Wait
       }
 
-      for el in str::from_utf8(bytes).slice(0, optnbread.unwrap()).chars() {
-        self.buffer.push(el);
+      match optnbread {
+        Err(e)     => { println!("opntbread is an error"); return Wait},
+        Ok(nb) => {
+          println!("optnbread {} bytes", nb);
+          let s  = str::from_utf8(bytes);
+          if s.is_some() {
+            for el in s.unwrap().slice(0, nb).chars() {
+              self.buffer.push(el);
+            }
+          }
+        }
       }
     }
 
-    let optc = self.buffer.shift_opt();
+    let optc = self.buffer.shift();
     match optc {
-      None    => return Wait,
+      None    => {println!("optc is none");return Wait},
       Some(c) => return self.parse_char(c)
     }
   }
@@ -108,10 +114,9 @@ impl<R: Reader> Parser<R> {
   }
 }
 
-impl<R: Reader> Iterator<Row> for Parser<R> {
+impl<'a, R: Reader> Iterator<Row> for Parser<'a, R> {
   fn next(&mut self) -> Option<Row> {
     match self.state {
-      EOF => return None,
       _   => {
         while(true) {
           match self.parse_next_char() {
@@ -121,21 +126,8 @@ impl<R: Reader> Iterator<Row> for Parser<R> {
                 self.state = Continue;
                 return Some(row);
               } else {
-                self.state = EOF;
+                self.state = EOL;
                 return None;
-              }
-            }
-            EOF => {
-              // the row may not be complete
-              println!("EOF");
-              let row = self.extract_last_row();
-              self.state = EOF;
-              if row.len() == 0 || (row.len() == 1 && row[0].len() == 0) {
-                println!("none row");
-                return None;
-              } else {
-                println!("row > 0");
-                return Some(row);
               }
             }
             Continue => (),
@@ -147,3 +139,4 @@ impl<R: Reader> Iterator<Row> for Parser<R> {
     None
   }
 }
+
