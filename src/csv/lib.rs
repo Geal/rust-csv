@@ -53,7 +53,7 @@ impl<'a, R: Reader> Parser<'a, R> {
 
       match optnbread {
         Err(e)     => { println!("opntbread is an error"); return Wait},
-        Ok(nb) => {
+        Ok(nb)     => {
           println!("optnbread {} bytes", nb);
           let s  = str::from_utf8(bytes);
           if s.is_some() {
@@ -88,6 +88,10 @@ impl<'a, R: Reader> Parser<'a, R> {
       },
       _    => {
         self.acc.push(c);
+        if self.buffer.len() == 0 {
+          self.row.push(str::from_chars(self.acc));
+          self.acc.clear();
+        }
         Continue
       }
     }
@@ -131,7 +135,15 @@ impl<'a, R: Reader> Iterator<Row> for Parser<'a, R> {
               }
             }
             Continue => (),
-            Wait => return None
+            Wait => {
+              self.state = Wait;
+              let row = self.extract_row();
+              if row.len() > 0 {
+                return Some(row);
+              }  else {
+                return None
+              }
+            }
           }
         }
       }
