@@ -52,7 +52,7 @@ impl<'a, R: Reader> Parser<'a, R> {
       }
 
       match optnbread {
-        Err(e)     => { println!("opntbread is an error"); return Wait},
+        Err(e)     => { println!("opntbread error: {}", e); return Wait},
         Ok(nb)     => {
           println!("optnbread {} bytes", nb);
           let s  = str::from_utf8(bytes);
@@ -122,7 +122,7 @@ impl<'a, R: Reader> Iterator<Row> for Parser<'a, R> {
   fn next(&mut self) -> Option<Row> {
     match self.state {
       _   => {
-        while(true) {
+        while true {
           match self.parse_next_char() {
             EOL => {
               let row = self.extract_row();
