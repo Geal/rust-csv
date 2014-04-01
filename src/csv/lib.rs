@@ -15,14 +15,14 @@ enum State {
 }
 
 pub struct Parser<'a, R> {
-  priv count: uint,
-  priv readlen: uint,
-  priv delim: char,
-  priv buffer: ~[char],
-  priv acc: ~[char],
-  priv row: Row,
-  priv reader: &'a mut R,
-  priv state: State
+  count: uint,
+  readlen: uint,
+  delim: char,
+  buffer: ~[char],
+  acc: ~[char],
+  row: Row,
+  reader: &'a mut R,
+  state: State
 }
 
 
