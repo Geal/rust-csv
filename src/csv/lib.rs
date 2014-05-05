@@ -6,7 +6,7 @@ use std::io;
 use std::str;
 use std::iter::Iterator;
 
-type Row = ~[~str];
+type Row = Vec<~str>;
 
 enum State {
   Continue,
@@ -18,8 +18,8 @@ pub struct Parser<'a, R> {
   count: uint,
   readlen: uint,
   delim: char,
-  buffer: ~[char],
-  acc: ~[char],
+  buffer: Vec<char>,
+  acc: Vec<char>,
   row: Row,
   reader: &'a mut R,
   state: State
@@ -32,9 +32,9 @@ pub fn init<'a, R: io::Reader>(reader: &'a mut R) -> ~Parser<'a, R> {
     count: 0,
     readlen: 1024,
     delim: ',',
-    buffer: ~[],
-    acc: ~[],
-    row: ~[],
+    buffer: vec!(),
+    acc: vec!(),
+    row: vec!(),
     reader: reader,
     state: Continue
   }
@@ -74,7 +74,7 @@ impl<'a, R: Reader> Parser<'a, R> {
 
   fn parse_char(&mut self, c: char) -> State {
     if c == self.delim {
-        self.row.push(str::from_chars(self.acc));
+        self.row.push(str::from_chars(self.acc.as_slice()));
         self.acc.clear();
         return Continue
     }
@@ -82,14 +82,14 @@ impl<'a, R: Reader> Parser<'a, R> {
     match c {
       '\r' => Continue,
       '\n' => {
-        self.row.push(str::from_chars(self.acc));
+        self.row.push(str::from_chars(self.acc.as_slice()));
         self.acc.clear();
         EOL
       },
       _    => {
         self.acc.push(c);
         if self.buffer.len() == 0 {
-          self.row.push(str::from_chars(self.acc));
+          self.row.push(str::from_chars(self.acc.as_slice()));
           self.acc.clear();
         }
         Continue
@@ -104,7 +104,7 @@ impl<'a, R: Reader> Parser<'a, R> {
   }
 
   fn extract_last_row(&mut self) -> Row {
-    self.row.push(str::from_chars(self.acc));
+    self.row.push(str::from_chars(self.acc.as_slice()));
     self.acc.clear();
     self.extract_row()
   }
