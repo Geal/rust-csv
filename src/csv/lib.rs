@@ -103,18 +103,8 @@ impl<'a, R: Reader> Parser<'a, R> {
     row
   }
 
-  fn extract_last_row(&mut self) -> Row {
-    self.row.push(str::from_chars(self.acc.as_slice()));
-    self.acc.clear();
-    self.extract_row()
-  }
-
   pub fn delim(&mut self, delim:char) {
     self.delim = delim;
-  }
-
-  fn state(&self) -> State {
-    self.state
   }
 }
 
