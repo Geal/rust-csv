@@ -1,4 +1,4 @@
-build:
+build: src/csv/lib.rs
 	mkdir -p build
 	rustc --out-dir build -O src/csv/lib.rs
 
