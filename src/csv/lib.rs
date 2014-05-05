@@ -1,6 +1,6 @@
-#[crate_type = "lib"];
-#[desc = "CSV parser"];
-#[license = "MIT"];
+#![crate_type = "lib"]
+#![desc = "CSV parser"]
+#![license = "MIT"]
 
 use std::io;
 use std::str;
