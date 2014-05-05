@@ -27,9 +27,8 @@ pub struct Parser<'a, R> {
 }
 
 
-pub fn init<'a, R: io::Reader>(reader: &'a mut R) -> ~Parser<'a, R> {
-
-  ~Parser {
+pub fn init<'a, R: io::Reader>(reader: &'a mut R) -> Parser<'a, R> {
+  Parser {
     count: 0,
     readlen: 1024,
     delim: ',',
