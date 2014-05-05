@@ -1,3 +1,4 @@
+#![crate_id = "csv"]
 #![crate_type = "lib"]
 #![desc = "CSV parser"]
 #![license = "MIT"]

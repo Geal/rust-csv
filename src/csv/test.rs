@@ -1,8 +1,6 @@
-use csv = lib;
+extern crate csv;
 
 use std::io::BufReader;
-
-mod lib;
 
 #[test]
 fn init() {
