@@ -6,7 +6,7 @@ use std::io;
 use std::str;
 use std::iter::Iterator;
 
-type Row = Vec<~str>;
+pub type Row = Vec<~str>;
 
 enum State {
   Continue,
@@ -120,35 +120,30 @@ impl<'a, R: Reader> Parser<'a, R> {
 
 impl<'a, R: Reader> Iterator<Row> for Parser<'a, R> {
   fn next(&mut self) -> Option<Row> {
-    match self.state {
-      _   => {
-        while true {
-          match self.parse_next_char() {
-            EOL => {
-              let row = self.extract_row();
-              if row.len() > 0 {
-                self.state = Continue;
-                return Some(row);
-              } else {
-                self.state = EOL;
-                return None;
-              }
-            }
-            Continue => (),
-            Wait => {
-              self.state = Wait;
-              let row = self.extract_row();
-              if row.len() > 0 {
-                return Some(row);
-              }  else {
-                return None
-              }
-            }
+    loop {
+      match self.parse_next_char() {
+        EOL => {
+          let row = self.extract_row();
+          if row.len() > 0 {
+            self.state = Continue;
+            return Some(row);
+          } else {
+            self.state = EOL;
+            return None;
+          }
+        }
+        Continue => (),
+        Wait => {
+          self.state = Wait;
+          let row = self.extract_row();
+          if row.len() > 0 {
+            return Some(row);
+          }  else {
+            return None
           }
         }
       }
     }
-    None
   }
 }
 
