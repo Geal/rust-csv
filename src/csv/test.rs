@@ -1,6 +1,5 @@
 use csv = lib;
 
-use std::io;
 use std::io::BufReader;
 
 mod lib;
