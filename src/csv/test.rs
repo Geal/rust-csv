@@ -1,7 +1,7 @@
 use csv = lib;
 
 use std::io;
-use io::BufReader;
+use std::io::BufReader;
 
 mod lib;
 
