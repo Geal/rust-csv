@@ -5,7 +5,7 @@ use std::io::BufReader;
 #[test]
 fn init() {
   let s = "a,b,c,d";
-  let mut reader = ~BufReader::new(s.as_bytes());
+  let reader = BufReader::new(s.as_bytes());
   let mut p = csv::init(reader);
   let optrow = p.next();
   assert_eq!(optrow.unwrap(), owned_string_vec(&["a", "b", "c", "d"]));
@@ -15,7 +15,7 @@ fn init() {
 #[test]
 fn multiline() {
   let s = "a,b,c,d\r\ne,f,g,h";
-  let mut reader = ~BufReader::new(s.as_bytes());
+  let reader = BufReader::new(s.as_bytes());
   let mut p = csv::init(reader);
 
   let optrow = p.next();
@@ -28,7 +28,7 @@ fn multiline() {
 #[test]
 fn delim() {
   let s = "aA ;b;c;d; e\r\nf;g;h; I;j\r\n";
-  let mut reader = ~BufReader::new(s.as_bytes());
+  let reader = BufReader::new(s.as_bytes());
   let mut p = csv::init(reader);
   p.delim(';');
 

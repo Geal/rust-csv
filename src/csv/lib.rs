@@ -15,19 +15,19 @@ enum State {
   EOL
 }
 
-pub struct Parser<'a, R> {
+pub struct Parser<R> {
   count: uint,
   readlen: uint,
   delim: char,
   buffer: Vec<char>,
   acc: Vec<char>,
   row: Row,
-  reader: &'a mut R,
+  reader: R,
   state: State
 }
 
 
-pub fn init<'a, R: io::Reader>(reader: &'a mut R) -> Parser<'a, R> {
+pub fn init<R: io::Reader>(reader: R) -> Parser<R> {
   Parser {
     count: 0,
     readlen: 1024,
@@ -40,7 +40,7 @@ pub fn init<'a, R: io::Reader>(reader: &'a mut R) -> Parser<'a, R> {
   }
 }
 
-impl<'a, R: Reader> Parser<'a, R> {
+impl<R: Reader> Parser<R> {
   fn parse_next_char(&mut self) -> State {
     if self.buffer.len() == 0 {
 
@@ -108,7 +108,7 @@ impl<'a, R: Reader> Parser<'a, R> {
   }
 }
 
-impl<'a, R: Reader> Iterator<Row> for Parser<'a, R> {
+impl<R: Reader> Iterator<Row> for Parser<R> {
   fn next(&mut self) -> Option<Row> {
     loop {
       match self.parse_next_char() {
