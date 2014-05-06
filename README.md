@@ -5,16 +5,20 @@
 This parser is a rewrite, different from the original [rust-csv](https://github.com/brson/rust-csv), because the previous project used an old syntax. For a failed attempt to update it to current Rust, see [rust-csv-legacy](https://github.com/Geal/rust-csv-legacy)
 ```Rust
     use csv;
-    use std::io::mem::Memreader;
+    use std::io::MemReader;
 
-    let s = ~"a;b;c;d\r\ne;f;g;h";
-    let mut parser = csv.init(~MemReader::new(s.into_bytes()));
+    fn main() {
+      let s = "a;b;c;d\r\ne;f;g;h";
 
-    //default delimitor is ','
-    parser.delim(';');
+      let reader = MemReader::new(Vec::from_slice(s.as_bytes()));
+      let mut parser = csv::init(reader);
 
-    for row in parser {
-      println!("first element is: {}", row[0]);
+      //default delimitor is ','
+      parser.delim(';');
+
+      for row in parser {
+        println!("first element is: {}", row.get(0));
+      }
     }
 ```
 
