@@ -98,9 +98,9 @@ impl<R: Reader> Parser<R> {
   }
 
   fn extract_row(&mut self) -> Row {
-    let row = self.row.clone();
-    self.row.clear();
-    row
+    use std::mem::replace;
+
+    replace(&mut self.row, Vec::new())
   }
 
   pub fn delim(&mut self, delim:char) {
