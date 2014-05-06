@@ -3,6 +3,9 @@
 #![desc = "CSV parser"]
 #![license = "MIT"]
 
+#![feature(phase)]
+#[phase(syntax, link)] extern crate log;
+
 use std::io;
 use std::str;
 use std::iter::Iterator;
@@ -47,14 +50,14 @@ impl<R: Reader> Parser<R> {
       let mut bytes = [0, .. 1024];
       let optnbread = self.reader.read(bytes);
       if bytes.len() == 0 {
-        println!("0 bytes read");
+        debug!("0 bytes read");
         return Wait
       }
 
       match optnbread {
-        Err(e)     => { println!("opntbread error: {}", e); return Wait},
+        Err(e)     => { debug!("opntbread error: {}", e); return Wait},
         Ok(nb)     => {
-          println!("optnbread {} bytes", nb);
+          debug!("optnbread {} bytes", nb);
           let s  = str::from_utf8(bytes);
           if s.is_some() {
             for el in s.unwrap().slice(0, nb).chars() {
@@ -67,7 +70,7 @@ impl<R: Reader> Parser<R> {
 
     let optc = self.buffer.shift();
     match optc {
-      None    => {println!("optc is none");return Wait},
+      None    => { debug!("optc is none");return Wait},
       Some(c) => return self.parse_char(c)
     }
   }
