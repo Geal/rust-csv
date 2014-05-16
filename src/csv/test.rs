@@ -7,6 +7,7 @@ mod lib;
 
 #[test]
 fn init() {
+  println!("{}", ~"pouet");
   let s = ~"a,b,c,d";
   let mut reader = ~BufReader::new(s.as_bytes());
   let mut p = csv::init(reader);
