@@ -6,7 +6,7 @@ use std::io;
 use std::str;
 use std::iter::Iterator;
 
-pub type Row = Vec<~str>;
+pub type Row = Vec<String>;
 
 enum State {
   Continue,
